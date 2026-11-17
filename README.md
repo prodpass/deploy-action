@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="images/prodpass-logo-reversed-800px.png">
-    <img src="images/prodpass-logo-colour-800px.png" width="320" alt="ProdPass">
+    <img src="images/prodpass-logo-colour-800px.png.png" width="320" alt="ProdPass">
   </picture>
 </p>
 
