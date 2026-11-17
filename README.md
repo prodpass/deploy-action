@@ -114,15 +114,6 @@ Also available: `ref`, `url`, `event_id`, `fail_on_unmatched`, `timeout_seconds`
 | `no instance matches` | The instance doesn't exist. Check **System instances**. |
 | `no answer within 30s` | GitHub can't reach ProdPass. For a private ProdPass, use a self-hosted runner. |
 
-## Versions
-
-Use a tag: `prodpass/deploy-action@v1.0`. Don't use `@main` in production pipelines.
-
-## Testing
-
-```bash
-node test/index.test.js
-```
 
 ## License
 
