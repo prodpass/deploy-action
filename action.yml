@@ -1,0 +1,85 @@
+name: 'ProdPass - Record Deployment'
+description: 'Record a deployment (version, outcome, release) against a ProdPass system instance or component.'
+author: 'Enov8 Ltd'
+
+branding:
+  icon: 'upload-cloud'
+  color: 'green'
+
+inputs:
+  prodpass_url:
+    description: 'The URL from ProdPass: Integrations > Deployment tools > GitHub Actions (https://<host>/hooks/integrations/<id>).'
+    required: true
+  prodpass_token:
+    description: 'The token shown when the GitHub Actions connection was created. Store it as a secret (PRODPASS_TOKEN).'
+    required: true
+
+  instance:
+    description: 'Instance code (e.g. payment-hub.uat2), or its Pipeline reference when only one instance has it. Use this, or system + environment.'
+    required: false
+  system:
+    description: 'System code, with environment, when the pipeline does not know the instance code (typical for microservices).'
+    required: false
+  environment:
+    description: 'Environment code, with system.'
+    required: false
+  component:
+    description: 'Optional component code (e.g. payments-api) for a system deployed in parts. A new code adds the component unless that is turned off in ProdPass.'
+    required: false
+
+  version:
+    description: 'The version deployed. A successful deployment updates the instance, or the component on it.'
+    required: true
+  status:
+    description: 'succeeded, failed, in_progress or rolled_back. GitHub job statuses work too: success -> succeeded, failure and cancelled -> failed. Pass the job.status expression to report the job outcome.'
+    required: false
+    default: 'succeeded'
+
+  release:
+    description: 'Release to link this deployment to: its code (REL-00012) or id. Left out, ProdPass matches a release by system and version (not for component deployments). "none" skips linking. A successful production deployment linked to an approved release can complete it.'
+    required: false
+  project:
+    description: 'Project code or id. Left out, the release''s project; "none" leaves it empty. Must be one of the release''s projects.'
+    required: false
+  ref:
+    description: 'Build or change reference. Default: the commit''s short SHA.'
+    required: false
+  url:
+    description: 'Link to the run. Default: this workflow run.'
+    required: false
+  started_at:
+    description: 'When the deployment started (ISO 8601). Used to place it in a deployment window.'
+    required: false
+  finished_at:
+    description: 'When it finished (ISO 8601). Default: now, unless status is in_progress.'
+    required: false
+  event_id:
+    description: 'Repeat-safe ID. ProdPass ignores a repeat of the same ID. Default: unique per run attempt, job, target and status.'
+    required: false
+
+  fail_on_unmatched:
+    description: 'Fail the step when ProdPass finds no matching instance (it answers HTTP 200 "unmatched" in that case). Default true.'
+    required: false
+    default: 'true'
+  timeout_seconds:
+    description: 'Per-request timeout. Network errors and 5xx answers are retried twice with the same event_id, so a retry can never record twice.'
+    required: false
+    default: '30'
+
+outputs:
+  outcome:
+    description: 'ProdPass''s outcome, e.g. applied or unmatched.'
+  summary:
+    description: 'ProdPass''s one-line summary of what it did.'
+  event_id:
+    description: 'The event ID sent (useful to correlate with Recent calls in ProdPass).'
+  release:
+    description: 'The release the deployment was linked to (from ProdPass''s reply, else the one sent). Empty when none.'
+  project:
+    description: 'The project the deployment was linked to (from ProdPass''s reply, else the one sent). Empty when none.'
+  response:
+    description: 'The raw JSON reply from ProdPass.'
+
+runs:
+  using: 'node24'
+  main: 'dist/index.js'
